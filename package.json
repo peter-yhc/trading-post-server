@@ -1,0 +1,27 @@
+{
+  "name": "trading-post-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/peter-yhc/trading-post-server.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/peter-yhc/trading-post-server/issues"
+  },
+  "homepage": "https://gitlab.com/peter-yhc/trading-post-server#README",
+  "devDependencies": {
+    "aws-sdk": "^2.328.0",
+    "jest": "^23.6.0"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "moment": "^2.22.2"
+  }
+}
