@@ -18,10 +18,13 @@
   "homepage": "https://gitlab.com/peter-yhc/trading-post-server#README",
   "devDependencies": {
     "aws-sdk": "^2.328.0",
-    "jest": "^23.6.0"
+    "aws-sdk-mock": "^4.2.0",
+    "jest": "^23.6.0",
+    "serverless-dynamodb-local": "^0.2.35"
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "config": "^2.0.1",
     "moment": "^2.22.2"
   }
 }

@@ -1,64 +1,27 @@
-# Welcome to Serverless!
-#
-# This file is the main config file for your service.
-# It's very minimal at this point and uses default values.
-# You can always add more config options for more control.
-# We've included some commented out config examples here.
-# Just uncomment any of them to get that config option.
-#
-# For full config options, check the docs:
-#    docs.serverless.com
-#
-# Happy Coding!
-
 service: tps # NOTE: update this with your service name
 
-# You can pin your service to only deploy with a specific Serverless version
-# Check out our docs for more details
-# frameworkVersion: "=X.X.X"
+custom:
+  tableName: StockTable
 
 provider:
   name: aws
   runtime: nodejs8.10
   region: ap-southeast-2
   stage: dev
-
-# you can overwrite defaults here
-#  stage: dev
-#  region: us-east-1
-
-# you can add statements to the Lambda function's IAM Role here
-#  iamRoleStatements:
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:ListBucket"
-#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:PutObject"
-#      Resource:
-#        Fn::Join:
-#          - ""
-#          - - "arn:aws:s3:::"
-#            - "Ref" : "ServerlessDeploymentBucket"
-#            - "/*"
-
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
-
-# you can add packaging information here
-#package:
-#  include:
-#    - include-me.js
-#    - include-me-dir/**
-#  exclude:
-#    - exclude-me.js
-#    - exclude-me-dir/**
+  iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+          - dynamodb:Scan
+          - dynamodb:GetItem
+          - dynamodb:PutItem
+          - dynamodb:UpdateItem
+          - dynamodb:DeleteItem
+  Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:custom.tableName}"
 
 functions:
   getStock:
-    handler: src/index.getStockData
+    handler: src/handler.getStockData
     events:
       - http:
           path: /stocks
@@ -66,10 +29,26 @@ functions:
           cors: true
 package:
   exclude:
-    - 'infrastructure/**'
     - '.idea/**'
     - 'src/**/*.test.js'
     - '*Docker*'
     - '*docker*'
-    - 'config.json'
 
+plugins:
+  - serverless-dynamodb-local
+
+resources:
+  Resources:
+    StockTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.tableName}
+        AttributeDefinitions:
+          - AttributeName: stockId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: stockId
+            KeyType: HASH
+        ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
