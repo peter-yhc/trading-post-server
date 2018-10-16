@@ -9,15 +9,15 @@ provider:
   region: ap-southeast-2
   stage: dev
   iamRoleStatements:
-      - Effect: Allow
-        Action:
-          - dynamodb:Query
-          - dynamodb:Scan
-          - dynamodb:GetItem
-          - dynamodb:PutItem
-          - dynamodb:UpdateItem
-          - dynamodb:DeleteItem
-  Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:custom.tableName}"
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:custom.tableName}"
 
 functions:
   getStock:
@@ -27,12 +27,6 @@ functions:
           path: /stocks
           method: post
           cors: true
-package:
-  exclude:
-    - '.idea/**'
-    - 'src/**/*.test.js'
-    - '*Docker*'
-    - '*docker*'
 
 plugins:
   - serverless-dynamodb-local
@@ -52,3 +46,11 @@ resources:
         ProvisionedThroughput:
             ReadCapacityUnits: 1
             WriteCapacityUnits: 1
+
+package:
+  exclude:
+    - '.idea/**'
+    - 'src/**/*.test.js'
+    - '*Docker*'
+    - '*docker*'
+    - '.dynamodb/**'
