@@ -30,6 +30,8 @@ functions:
 
 plugins:
   - serverless-dynamodb-local
+  - serverless-plugin-typescript
+  - serverless-offline
 
 resources:
   Resources:
