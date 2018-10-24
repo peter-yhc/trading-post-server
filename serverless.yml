@@ -1,7 +1,12 @@
-service: tps # NOTE: update this with your service name
+service:
+  name: tps
 
 custom:
   tableName: StockTable
+
+# Add the serverless-webpack plugin
+plugins:
+  - serverless-webpack
 
 provider:
   name: aws
@@ -27,11 +32,6 @@ functions:
           path: /stocks
           method: post
           cors: true
-
-plugins:
-  - serverless-dynamodb-local
-  - serverless-plugin-typescript
-  - serverless-offline
 
 resources:
   Resources:

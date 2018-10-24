@@ -1,20 +1,28 @@
+const mockDynamo = {get: jest.fn(), put: jest.fn()}
+
+import {DocumentClient} from 'aws-sdk/lib/dynamodb/document_client'
 import * as handler from './handler'
-import * as AWS from 'aws-sdk'
-import * as config from 'config'
-import {PutItemInput} from 'aws-sdk/clients/dynamodb'
-import {Context, AttributeValue} from 'aws-lambda'
+import {Context} from 'aws-lambda'
+import GetItemInput = DocumentClient.GetItemInput
 
-const dynamo = new AWS.DynamoDB({
-    region: config.get('Dynamo.region'),
-    endpoint: config.get('Dynamo.endpoint')
-})
+jest.mock('aws-sdk', () => ({
+  DynamoDB: {
+    DocumentClient: function DocumentClient() {
+      return mockDynamo
+    }
+  }
+}))
 
-test('checks dynamodb', async (done) => {
-    const params: PutItemInput = {TableName: 'StockTable', Item: {symbol: <AttributeValue>'AMZN'}}
-    await dynamo.putItem(params)
+test('checks dynamodb to see if stock is cached ', async () => {
+  mockDynamo.get.mockReturnValue({promise: () => Promise.resolve()})
 
-    handler.getStockData({symbol: 'AMZN'}, <Context> {}, () => {
-        console.log()
-        done()
-    })
+  await handler.getStockData({symbol: 'AMZN'}, <Context> {}, () => {
+  })
+
+  expect(mockDynamo.get).toBeCalledWith(<GetItemInput> {
+    TableName: 'StockTable',
+    Key: {
+      stockId: 'AMZN'
+    }
+  })
 })
