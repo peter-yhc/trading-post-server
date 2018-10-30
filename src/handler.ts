@@ -1,7 +1,9 @@
 import {Callback, Context, Handler} from 'aws-lambda'
 import {DocumentClient} from 'aws-sdk/lib/dynamodb/document_client'
 import * as AWS from 'aws-sdk'
+import * as YahooApi from './yahoo-api'
 import GetItemInput = DocumentClient.GetItemInput
+import PutItemInput = DocumentClient.PutItemInput
 
 interface HttpResponse {
   statusCode: number
@@ -15,13 +17,22 @@ const documentClient = new AWS.DynamoDB.DocumentClient({
 export const getStockData: Handler = async (event: any, context: Context, callback: Callback) => {
   const params: GetItemInput = {
     TableName: 'StockTable',
-    Key: {stockId: event.symbol}
+    Key: {symbol: event.symbol}
   }
-  const result = await documentClient.get(params).promise()
+  const cachedResult = (await documentClient.get(params).promise()).Item
+
+  let liveResult = undefined
+  if (!cachedResult) {
+    liveResult = await YahooApi.getStockHistory(event.symbol)
+    await documentClient.put(<PutItemInput> {
+      TableName: 'StockTable',
+      Item: liveResult
+    }).promise()
+  }
 
   const response: HttpResponse = {
     statusCode: 200,
-    body: JSON.stringify(result)
+    body: JSON.stringify(cachedResult || liveResult)
   }
 
   callback(undefined, response)

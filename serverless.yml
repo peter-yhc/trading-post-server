@@ -40,10 +40,10 @@ resources:
       Properties:
         TableName: ${self:custom.tableName}
         AttributeDefinitions:
-          - AttributeName: stockId
+          - AttributeName: symbol
             AttributeType: S
         KeySchema:
-          - AttributeName: stockId
+          - AttributeName: symbol
             KeyType: HASH
         ProvisionedThroughput:
             ReadCapacityUnits: 1
