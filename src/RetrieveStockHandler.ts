@@ -1,7 +1,7 @@
 import {Callback, Context, Handler} from 'aws-lambda'
 import {DocumentClient} from 'aws-sdk/lib/dynamodb/document_client'
 import * as AWS from 'aws-sdk'
-import * as YahooApi from './yahoo-api'
+import * as YahooApi from './YahooApi'
 import GetItemInput = DocumentClient.GetItemInput
 import PutItemInput = DocumentClient.PutItemInput
 

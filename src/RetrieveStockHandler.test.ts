@@ -1,8 +1,8 @@
 const mockDynamo = {get: jest.fn(), put: jest.fn()}
-const mockYahooApi = jest.genMockFromModule('./yahoo-api') as any
+const mockYahooApi = jest.genMockFromModule('./YahooApi') as any
 
 import {DocumentClient} from 'aws-sdk/lib/dynamodb/document_client'
-import * as handler from './handler'
+import * as handler from './RetrieveStockHandler'
 import {Context} from 'aws-lambda'
 import GetItemInput = DocumentClient.GetItemInput
 
@@ -14,7 +14,7 @@ jest.mock('aws-sdk', () => ({
   }
 }))
 
-jest.mock('./yahoo-api', () => mockYahooApi)
+jest.mock('./YahooApi', () => mockYahooApi)
 
 test('checks dynamodb to see if stock is cached ', async () => {
   mockDynamo.get.mockReturnValue({
@@ -29,13 +29,14 @@ test('checks dynamodb to see if stock is cached ', async () => {
   expect(mockDynamo.get).toBeCalledWith(<GetItemInput> {
     TableName: 'StockTable',
     Key: {
-      stockId: 'AMZN'
+      symbol: 'AMZN'
     }
   })
 })
 
-test('grabs new realtime data if it is not cached in database', async () => {
-  mockDynamo.get.mockReturnValue({promise: () => Promise.resolve({Items: []})})
+test('grabs new real time data and saves if it is not cached in database', async () => {
+  mockDynamo.get.mockReturnValue({promise: () => Promise.resolve({Item: null})})
+  mockDynamo.put.mockReturnValue({promise: () => Promise.resolve()})
 
   await handler.getStockData({symbol: 'AMZN'}, < Context > {}, () => {
   })
