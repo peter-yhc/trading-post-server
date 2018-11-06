@@ -1,5 +1,5 @@
 const mockDynamo = {get: jest.fn(), put: jest.fn()}
-const mockYahooApi = jest.genMockFromModule('./YahooApi') as any
+const mockYahooApi = jest.genMockFromModule('../src/YahooApi') as any
 
 import {DocumentClient} from 'aws-sdk/lib/dynamodb/document_client'
 import * as handler from '../src/RetrieveStockHandler'
@@ -14,7 +14,7 @@ jest.mock('aws-sdk', () => ({
   }
 }))
 
-jest.mock('./YahooApi', () => mockYahooApi)
+jest.mock('../src/YahooApi', () => mockYahooApi)
 
 test('checks dynamodb to see if stock is cached ', async () => {
   mockDynamo.get.mockReturnValue({
