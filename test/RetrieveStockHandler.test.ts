@@ -2,7 +2,7 @@ const mockDynamo = {get: jest.fn(), put: jest.fn()}
 const mockYahooApi = jest.genMockFromModule('./YahooApi') as any
 
 import {DocumentClient} from 'aws-sdk/lib/dynamodb/document_client'
-import * as handler from './RetrieveStockHandler'
+import * as handler from '../src/RetrieveStockHandler'
 import {Context} from 'aws-lambda'
 import GetItemInput = DocumentClient.GetItemInput
 

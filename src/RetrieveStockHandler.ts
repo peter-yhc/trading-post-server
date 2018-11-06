@@ -9,8 +9,8 @@ interface HttpResponse {
 
 
 export const getStockData: Handler = async (event: any, context: Context, callback: Callback) => {
-  const cachedResult = await get(event.symbol)
-  let result = cachedResult || getLiveData(event.symbol)
+  const cachedResult = await get(event.symbol.toUpperCase())
+  let result = cachedResult || await getLiveData(event.symbol)
 
   const response: HttpResponse = {
     statusCode: 200,

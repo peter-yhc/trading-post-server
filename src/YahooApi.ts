@@ -1,8 +1,6 @@
 const axios = require('axios')
 const moment = require('moment')
 
-const MAX_HISTORY = 24 * 60 * 60 * 365 * 5 // 5 years
-
 interface YahooStockData {
   symbol: string,
   currency: string,
@@ -17,9 +15,8 @@ interface YahooStockData {
 
 export async function getStockHistory(symbol): Promise<YahooStockData> {
   const endingPeriod = Math.round(new Date().getTime() / 1000)
-  const startingPeriod = endingPeriod - MAX_HISTORY
-  const response = await axios.get(
-    `https://cors.io/?https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?period1=${startingPeriod}&period2=${endingPeriod}&interval=1d`)
+  const startingPeriod = 0
+  const response = await axios.get(`https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?period1=${startingPeriod}&period2=${endingPeriod}&interval=1d`)
   const data = response.data.chart.result[0]
   const closingData = data.indicators.quote[0].close
 

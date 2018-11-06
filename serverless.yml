@@ -26,7 +26,7 @@ provider:
 
 functions:
   getStock:
-    handler: src/handler.getStockData
+    handler: src/RetrieveStockHandler.getStockData
     events:
       - http:
           path: /stocks
