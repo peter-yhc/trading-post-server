@@ -25,15 +25,15 @@ export const invokeUpdateClosingBalances: Handler = async (event: any, context: 
 
   const lambda = new AWS.Lambda({region: 'ap-southeast-2'})
   await Promise.all(symbols.map(symbol => {
-      lambda.invoke({
-        FunctionName: 'updateClosingBalance',
-        Payload: {symbol},
+      return lambda.invoke({
+        FunctionName: 'tps-dev-updateClosingBalance',
+        Payload: JSON.stringify({symbol}),
         InvocationType: 'Event'
       }).promise()
     })
   )
 
-  callback(undefined)
+  callback(undefined, {body: 'Initiating update of closing balances.'})
 }
 
 export const updateClosingBalance: Handler = async (event: any, context: Context, callback: Callback) => {

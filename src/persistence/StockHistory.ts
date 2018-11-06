@@ -28,8 +28,7 @@ const scanSymbols = async () => {
     TableName: 'StockTable'
   }).promise()
 
-  const symbols = stocks.Items.map(stock => stock.symbol)
-  return symbols
+  return stocks.Items.map(stock => stock.symbol)
 }
 
 export {

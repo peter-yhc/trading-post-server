@@ -23,7 +23,11 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:custom.tableName}"
-
+    - Effect: Allow
+      Action:
+        - lambda:InvokeFunction
+        - lambda:InvokeAsync
+      Resource: "*"
 functions:
   getStock:
     handler: src/RetrieveStockHandler.getStockData
@@ -35,7 +39,9 @@ functions:
   invokeUpdateClosingBalances:
     handler: src/RetrieveStockHandler.invokeUpdateClosingBalances
     events:
-      - schedule: rate(24 hour)
+      - schedule:
+        rate: cron(0 0 * * * *)
+        enabled: true
   updateClosingBalance:
     handler: src/RetrieveStockHandler.updateClosingBalance
 
