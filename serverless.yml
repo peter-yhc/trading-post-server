@@ -32,6 +32,12 @@ functions:
           path: /stocks
           method: post
           cors: true
+  invokeUpdateClosingBalances:
+    handler: src/RetrieveStockHandler.invokeUpdateClosingBalances
+    events:
+      - schedule: rate(24 hour)
+  updateClosingBalance:
+    handler: src/RetrieveStockHandler.updateClosingBalance
 
 resources:
   Resources:

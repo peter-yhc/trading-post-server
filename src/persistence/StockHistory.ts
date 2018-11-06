@@ -2,6 +2,7 @@ import * as AWS from 'aws-sdk'
 import {DocumentClient} from 'aws-sdk/lib/dynamodb/document_client'
 import GetItemInput = DocumentClient.GetItemInput
 import PutItemInput = DocumentClient.PutItemInput
+import ScanInput = DocumentClient.ScanInput
 
 const documentClient = new AWS.DynamoDB.DocumentClient({
   region: 'ap-southeast-2'
@@ -22,7 +23,17 @@ const save = async (result) => {
   }).promise()
 }
 
+const scanSymbols = async () => {
+  const stocks = await documentClient.scan(<ScanInput> {
+    TableName: 'StockTable'
+  }).promise()
+
+  const symbols = stocks.Items.map(stock => stock.symbol)
+  return symbols
+}
+
 export {
   get,
-  save
+  save,
+  scanSymbols
 }
