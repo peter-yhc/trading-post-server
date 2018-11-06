@@ -10,17 +10,18 @@ interface HttpResponse {
 
 export const getStockData: Handler = async (event: any, context: Context, callback: Callback) => {
   const cachedResult = await get(event.symbol)
-
-  let liveResult = undefined
-  if (!cachedResult) {
-    liveResult = await YahooApi.getStockHistory(event.symbol)
-    await save(liveResult)
-  }
+  let result = cachedResult || getLiveData(event.symbol)
 
   const response: HttpResponse = {
     statusCode: 200,
-    body: JSON.stringify(cachedResult || liveResult)
+    body: JSON.stringify(cachedResult || result)
   }
 
   callback(undefined, response)
+}
+
+async function getLiveData(symbol) {
+  const liveResult = await YahooApi.getStockHistory(symbol)
+  await save(liveResult)
+  return liveResult
 }
