@@ -34,9 +34,14 @@ test('checks dynamodb to see if stock is cached ', async () => {
   })
 })
 
-test('grabs new real time data and saves if it is not cached in database', async () => {
+test('grabs new real time data and saves if it is not cached in database', async (done) => {
   mockDynamo.get.mockReturnValue({promise: () => Promise.resolve({Item: null})})
-  mockDynamo.put.mockReturnValue({promise: () => Promise.resolve()})
+  mockYahooApi.getStockHistory.mockReturnValue({symbol: 'AMZN'})
+  mockDynamo.put.mockImplementation(data => {
+    console.log(data)
+    expect(data.Item.symbol).toBe('AMZN')
+    return {promise: () => Promise.resolve(done())}
+  })
 
   await handler.getStockData({symbol: 'AMZN'}, < Context > {}, () => {
   })
