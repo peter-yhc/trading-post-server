@@ -3,6 +3,7 @@ import {DocumentClient} from 'aws-sdk/lib/dynamodb/document_client'
 import GetItemInput = DocumentClient.GetItemInput
 import PutItemInput = DocumentClient.PutItemInput
 import ScanInput = DocumentClient.ScanInput
+import UpdateItemInput = DocumentClient.UpdateItemInput
 
 const documentClient = new AWS.DynamoDB.DocumentClient({
   region: 'ap-southeast-2'
@@ -23,6 +24,33 @@ const save = async (result) => {
   }).promise()
 }
 
+const insertClosingPrice = async (priceData) => {
+
+  try {
+    await documentClient.update(<UpdateItemInput> {
+      TableName: 'StockTable',
+      Key: {symbol: priceData.symbol.toUpperCase()},
+      UpdateExpression: 'set #history.#dates = list_append (#history.#dates, :newDateArray), #history.#closing = list_append(#history.#closing, :newClosingArray)',
+      ConditionExpression: 'not contains (#history.#dates, :newDate)',
+      ExpressionAttributeNames: {
+        '#history': 'history',
+        '#dates': 'dates',
+        '#closing': 'closingPrices'
+      },
+      ExpressionAttributeValues: {
+        ':newDateArray': [priceData.date],
+        ':newClosingArray': [priceData.closingPrice],
+        ':newDate': priceData.date
+      },
+      ReturnValues: 'UPDATED_NEW'
+    }).promise()
+  } catch (e) {
+    console.log('ERROR')
+    console.log(e)
+  }
+
+}
+
 const scanSymbols = async () => {
   const stocks = await documentClient.scan(<ScanInput> {
     TableName: 'StockTable'
@@ -34,5 +62,6 @@ const scanSymbols = async () => {
 export {
   get,
   save,
-  scanSymbols
+  scanSymbols,
+  insertClosingPrice
 }

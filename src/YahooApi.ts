@@ -13,6 +13,12 @@ interface YahooStockData {
   fetchedAt: Date
 }
 
+interface YahooClosingBalance {
+  symbol: String,
+  date: number,
+  closingPrice: number
+}
+
 export async function getStockHistory(symbol): Promise<YahooStockData> {
   const endingPeriod = Math.round(new Date().getTime() / 1000)
   const startingPeriod = 0
@@ -30,5 +36,17 @@ export async function getStockHistory(symbol): Promise<YahooStockData> {
       closingPrices: closingData
     },
     fetchedAt: moment().format('YYYY-MM-DD')
+  }
+}
+
+export async function getLatestClosingPrice(symbol): Promise<YahooClosingBalance> {
+  const endingPeriod = Math.round(new Date().getTime() / 1000)
+  const startingPeriod = endingPeriod - 86400
+
+  const response = await axios.get(`https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?period1=${startingPeriod}&period2=${endingPeriod}&interval=1d`)
+  return <YahooClosingBalance> {
+    symbol,
+    date: response.data.chart.result[0].timestamp[0],
+    closingPrice: response.data.chart.result[0].indicators.quote[0].close[1]
   }
 }

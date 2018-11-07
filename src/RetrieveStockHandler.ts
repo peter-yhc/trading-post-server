@@ -1,6 +1,6 @@
 import {Callback, Context, Handler} from 'aws-lambda'
 import * as YahooApi from './YahooApi'
-import {get, save, scanSymbols} from './persistence/StockHistory'
+import {get, insertClosingPrice, save, scanSymbols} from './persistence/StockHistory'
 import * as AWS from 'aws-sdk'
 
 interface HttpResponse {
@@ -20,6 +20,12 @@ export const getStockData: Handler = async (event: any, context: Context, callba
   callback(undefined, response)
 }
 
+async function getLiveData(symbol) {
+  const liveResult = await YahooApi.getStockHistory(symbol)
+  await save(liveResult)
+  return liveResult
+}
+
 export const invokeUpdateClosingBalances: Handler = async (event: any, context: Context, callback: Callback) => {
   const symbols = await scanSymbols()
 
@@ -37,13 +43,8 @@ export const invokeUpdateClosingBalances: Handler = async (event: any, context: 
 }
 
 export const updateClosingBalance: Handler = async (event: any, context: Context, callback: Callback) => {
-  console.log(event)
+  const closingPrice = await YahooApi.getLatestClosingPrice(event.symbol)
+  await insertClosingPrice(closingPrice)
 
-  callback(undefined)
-}
-
-async function getLiveData(symbol) {
-  const liveResult = await YahooApi.getStockHistory(symbol)
-  await save(liveResult)
-  return liveResult
+  callback(undefined, closingPrice)
 }
