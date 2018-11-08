@@ -9,14 +9,15 @@ interface HttpResponse {
 }
 
 export const getStockData: Handler = async (event: any, context: Context, callback: Callback) => {
-  const cachedResult = await get(event.symbol.toUpperCase())
-  let result = cachedResult || await getLiveData(event.symbol)
+  const symbol = event.queryStringParameters.symbol.toUpperCase()
+
+  const cachedResult = await get(symbol)
+  let result = cachedResult || await getLiveData(symbol)
 
   const response: HttpResponse = {
     statusCode: 200,
     body: JSON.stringify(cachedResult || result)
   }
-
   callback(undefined, response)
 }
 

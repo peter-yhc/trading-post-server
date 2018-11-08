@@ -33,7 +33,7 @@ functions:
     events:
       - http:
           path: /stocks
-          method: post
+          method: get
           cors: true
   invokeUpdateClosingBalances:
     handler: src/RetrieveStockHandler.invokeUpdateClosingBalances
