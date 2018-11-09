@@ -38,7 +38,7 @@ functions:
   invokeUpdateClosingBalances:
     handler: src/RetrieveStockHandler.invokeUpdateClosingBalances
     events:
-      - schedule: cron(0 0 * * ? *)
+      - schedule: cron(0 6 * * ? *)
   updateClosingBalance:
     handler: src/RetrieveStockHandler.updateClosingBalance
 
