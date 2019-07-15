@@ -1,7 +1,6 @@
 import * as AWS from 'aws-sdk';
 import { DocumentClient } from 'aws-sdk/lib/dynamodb/document_client';
 import GetItemInput = DocumentClient.GetItemInput;
-import PutItemInput = DocumentClient.PutItemInput;
 import PutItemOutput = DocumentClient.PutItemOutput;
 import UpdateItemOutput = DocumentClient.UpdateItemOutput;
 
@@ -19,7 +18,7 @@ const get = async (symbol): Promise<any> => {
 
 const save = async (result): Promise<PutItemOutput> =>
   await documentClient
-    .put(<PutItemInput>{
+    .put({
       TableName: 'StockTable',
       Item: result,
     })
