@@ -9,7 +9,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "moment": "^2.22.2",
-    "serverless": "^1.47.0"
+    "serverless": "^1.83.3"
   },
   "devDependencies": {
     "@types/aws-lambda": "8.10.1",
